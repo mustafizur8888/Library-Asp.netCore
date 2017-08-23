@@ -12,7 +12,7 @@ namespace LibraryData.Migrations
             migrationBuilder.AddColumn<int>(
                 name: "HomeLibraryBranchId",
                 table: "Patrons",
-                nullable: true);
+                nullable: true); 
 
             migrationBuilder.CreateTable(
                 name: "LibraryBranches",
