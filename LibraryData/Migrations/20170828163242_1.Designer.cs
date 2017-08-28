@@ -8,9 +8,10 @@ using LibraryData;
 namespace LibraryData.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    partial class LibraryContextModelSnapshot : ModelSnapshot
+    [Migration("20170828163242_1")]
+    partial class _1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -21,17 +22,17 @@ namespace LibraryData.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("BranchId");
-
                     b.Property<int>("CloseTime");
 
                     b.Property<int>("DayOfWeek");
+
+                    b.Property<int?>("LibraryBranchId");
 
                     b.Property<int>("OpenTime");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
+                    b.HasIndex("LibraryBranchId");
 
                     b.ToTable("BranchHours");
                 });
@@ -256,9 +257,9 @@ namespace LibraryData.Migrations
 
             modelBuilder.Entity("LibraryData.Models.BranchHours", b =>
                 {
-                    b.HasOne("LibraryData.Models.LibraryBranch", "Branch")
+                    b.HasOne("LibraryData.Models.LibraryBranch", "LibraryBranch")
                         .WithMany()
-                        .HasForeignKey("BranchId");
+                        .HasForeignKey("LibraryBranchId");
                 });
 
             modelBuilder.Entity("LibraryData.Models.Checkout", b =>

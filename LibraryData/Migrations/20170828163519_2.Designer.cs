@@ -8,8 +8,8 @@ using LibraryData;
 namespace LibraryData.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20170823190816_Add initial Entity models")]
-    partial class AddinitialEntitymodels
+    [Migration("20170828163519_2")]
+    partial class _2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,17 +22,17 @@ namespace LibraryData.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("BranchId");
+
                     b.Property<int>("CloseTime");
 
                     b.Property<int>("DayOfWeek");
-
-                    b.Property<int?>("LibraryBranchId");
 
                     b.Property<int>("OpenTime");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LibraryBranchId");
+                    b.HasIndex("BranchId");
 
                     b.ToTable("BranchHours");
                 });
@@ -169,11 +169,7 @@ namespace LibraryData.Migrations
 
                     b.Property<decimal>("Fees");
 
-                    b.Property<int?>("PatronId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PatronId");
 
                     b.ToTable("LibraryCards");
                 });
@@ -183,21 +179,32 @@ namespace LibraryData.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Address");
+                    b.Property<string>("Address")
+                        .IsRequired();
 
                     b.Property<DateTime>("DateOfBirth");
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(30);
+
+                    b.Property<string>("Gender");
 
                     b.Property<int?>("HomeLibraryBranchId");
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
-                    b.Property<string>("TalephoneNumber");
+                    b.Property<int>("LibraryCardId");
+
+                    b.Property<string>("Telephone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HomeLibraryBranchId");
+
+                    b.HasIndex("LibraryCardId");
 
                     b.ToTable("Patrons");
                 });
@@ -218,6 +225,24 @@ namespace LibraryData.Migrations
                     b.ToTable("Statuses");
                 });
 
+            modelBuilder.Entity("LibraryData.Models.Book", b =>
+                {
+                    b.HasBaseType("LibraryData.Models.LibraryAsset");
+
+                    b.Property<string>("Author")
+                        .IsRequired();
+
+                    b.Property<string>("DeweyIndex")
+                        .IsRequired();
+
+                    b.Property<string>("ISBN")
+                        .IsRequired();
+
+                    b.ToTable("Book");
+
+                    b.HasDiscriminator().HasValue("Book");
+                });
+
             modelBuilder.Entity("LibraryData.Models.Video", b =>
                 {
                     b.HasBaseType("LibraryData.Models.LibraryAsset");
@@ -232,9 +257,9 @@ namespace LibraryData.Migrations
 
             modelBuilder.Entity("LibraryData.Models.BranchHours", b =>
                 {
-                    b.HasOne("LibraryData.Models.LibraryBranch", "LibraryBranch")
+                    b.HasOne("LibraryData.Models.LibraryBranch", "Branch")
                         .WithMany()
-                        .HasForeignKey("LibraryBranchId");
+                        .HasForeignKey("BranchId");
                 });
 
             modelBuilder.Entity("LibraryData.Models.Checkout", b =>
@@ -285,18 +310,16 @@ namespace LibraryData.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("LibraryData.Models.LibraryCard", b =>
-                {
-                    b.HasOne("LibraryData.Models.Patron")
-                        .WithMany("LibraryCard")
-                        .HasForeignKey("PatronId");
-                });
-
             modelBuilder.Entity("LibraryData.Models.Patron", b =>
                 {
                     b.HasOne("LibraryData.Models.LibraryBranch", "HomeLibraryBranch")
                         .WithMany("Patrons")
                         .HasForeignKey("HomeLibraryBranchId");
+
+                    b.HasOne("LibraryData.Models.LibraryCard", "LibraryCard")
+                        .WithMany()
+                        .HasForeignKey("LibraryCardId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }
